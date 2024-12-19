@@ -10,7 +10,8 @@ plotCrossMetricPerFov(
   correction = NULL,
   x = NULL,
   imageId = NULL,
-  ID = NULL
+  ID = NULL,
+  ...
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ plotCrossMetricPerFov(
 \item{imageId}{the ID of the image/fov}
 
 \item{ID}{the (optional) ID for plotting combinations}
+
+\item{...}{Other parameters passed to \code{ggplot2} functions}
 }
 \value{
 a ggplot object

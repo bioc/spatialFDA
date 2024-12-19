@@ -74,7 +74,11 @@
             },
             error = function(e) {
                 print(e)
-                stop()
+                metricRes <- data.frame(
+                  r = rSeq,
+                  fun = fun,
+                  row.names = seq_along(rSeq)
+                )
             }
         )
     # This handles the case when we do cross functions for the same type
@@ -105,7 +109,11 @@
             },
             error = function(e) {
                 print(e)
-                stop()
+                metricRes <- data.frame(
+                  r = rSeq,
+                  fun = fun,
+                  row.names = seq_along(rSeq)
+                )
             }
         )
     } else {

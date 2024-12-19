@@ -1,6 +1,7 @@
 # spatialFDA 0.99.2
 * Rewrote vignette with smaller dataset
 * Implemented quasi likelihood family in vignette to improve variance estimation
+* Adjustd calcMetricPerFov.R to be able to calculate cross functions
 
 # spatialFDA 0.99.1
 * Adressed Bioconductor review
