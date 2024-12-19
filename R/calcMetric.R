@@ -232,7 +232,7 @@ calcMetricPerFov <- function(spe, selection, subsetby = NULL, fun, marks = NULL,
 #'
 #' @examples
 #' spe <- imcdatasets::Damond_2019_Pancreas("spe", full_dataset = FALSE)
-#' metricRes <- calcCrossMetricPerFov(spe, c("alpha", "beta", "delta"),
+#' metricRes <- calcCrossMetricPerFov(spe, c("alpha", "beta"),
 #'     subsetby = "image_number", fun = "Gcross", marks = "cell_type",
 #'     rSeq = seq(0, 50, length.out = 50), by = c(
 #'         "patient_stage", "patient_id",

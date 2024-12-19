@@ -163,9 +163,11 @@ We can visualise this metric with `plotMetricPerFov` function. Here, we need to 
 
 ```{r plotLfunction, warning = FALSE}
 # change levels for plotting
-metricRes$ID <- factor(metricRes$ID, levels = c('Non-diabetic|6126', 'Non-diabetic|6134', 
-                          'Onset|6228','Onset|6362',  'Long-duration|6089', 
-                          'Long-duration|6180'))
+metricRes$ID <- factor(metricRes$ID, levels = c("Non-diabetic|6126", 
+                                                "Non-diabetic|6134", 
+                                                "Onset|6228","Onset|6362",
+                                                "Long-duration|6089", 
+                                                "Long-duration|6180"))
 # plot metrics
 plotMetricPerFov(metricRes, correction = "iso", x = "r",
                  imageId = "image_number", ID = "ID", ncol = 2)
@@ -197,9 +199,11 @@ metricRes %>% head(3)
 
 ```{r plotGfunction, warning = FALSE}
 # change levels for plotting
-metricRes$ID <- factor(metricRes$ID, levels = c('Non-diabetic|6126', 'Non-diabetic|6134', 
-                          'Onset|6228','Onset|6362',  'Long-duration|6089', 
-                          'Long-duration|6180'))
+metricRes$ID <- factor(metricRes$ID, levels = c("Non-diabetic|6126", 
+                                                "Non-diabetic|6134", 
+                                                "Onset|6228","Onset|6362",
+                                                "Long-duration|6089", 
+                                                "Long-duration|6180"))
 # plot metrics
 plotMetricPerFov(metricRes, correction = "km", x = "r",
                  imageId = "image_number", ID = "ID", ncol = 2)
@@ -222,7 +226,7 @@ metricRes$ID <- with(metricRes,
 #there is no cells of one type
 metricRes <- metricRes %>% group_by(ID) %>% filter(sum(km) >= 1)
 
-collector <- plotFbPlot(metricRes, 'r', 'km', 'patient_stage')
+collector <- plotFbPlot(metricRes, "r", "km", "patient_stage")
 ```
 
 The functional boxplot shows that onset $G$-curves are more variable than the corresponding long-duration and non-diabetic curves. We note as well, that the variability is heteroscedastic along the domain (i.e., variance increases with radius), which is undesirable for our statistical modelling. Therefore, we can e.g. apply a variance stabilising transformation to our data or model this variance in the statistical model.

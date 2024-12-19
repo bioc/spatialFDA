@@ -1,3 +1,6 @@
+# spatialFDA 0.99.3
+* adjust examples to build under 10 min
+
 # spatialFDA 0.99.2
 * Rewrote vignette with smaller dataset
 * Implemented quasi likelihood family in vignette to improve variance estimation
