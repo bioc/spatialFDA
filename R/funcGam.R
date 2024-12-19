@@ -79,7 +79,7 @@ functionalGam <- function(data, x, designmat, weights, formula,
     stopifnot(is(designmat, "matrix"))
     stopifnot(is(weights, "integer"))
     stopifnot(is(formula, "formula"))
-    stopifnot(is(family, "character"))
+    stopifnot(is(family, "character") || is(family, "family"))
 
     data <- cbind(data, designmat)
     # Test that length of number of points and nrow of designmat correspond
