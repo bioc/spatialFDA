@@ -163,10 +163,9 @@ We can visualise this metric with `plotMetricPerFov` function. Here, we need to 
 
 ```{r plotLfunction, warning = FALSE}
 # change levels for plotting
-metricRes$ID <- metricRes$ID %>% as.factor()
-levels(metricRes$ID) <- c('Non-diabetic|6126', 'Non-diabetic|6134', 
+metricRes$ID <- factor(metricRes$ID, levels = c('Non-diabetic|6126', 'Non-diabetic|6134', 
                           'Onset|6228','Onset|6362',  'Long-duration|6089', 
-                          'Long-duration|6180')
+                          'Long-duration|6180'))
 # plot metrics
 plotMetricPerFov(metricRes, correction = "iso", x = "r",
                  imageId = "image_number", ID = "ID", ncol = 2)
@@ -198,10 +197,9 @@ metricRes %>% head(3)
 
 ```{r plotGfunction, warning = FALSE}
 # change levels for plotting
-metricRes$ID <- metricRes$ID %>% as.factor()
-levels(metricRes$ID) <- c('Non-diabetic|6126', 'Non-diabetic|6134', 
+metricRes$ID <- factor(metricRes$ID, levels = c('Non-diabetic|6126', 'Non-diabetic|6134', 
                           'Onset|6228','Onset|6362',  'Long-duration|6089', 
-                          'Long-duration|6180')
+                          'Long-duration|6180'))
 # plot metrics
 plotMetricPerFov(metricRes, correction = "km", x = "r",
                  imageId = "image_number", ID = "ID", ncol = 2)
