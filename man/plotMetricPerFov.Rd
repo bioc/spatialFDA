@@ -11,6 +11,8 @@ plotMetricPerFov(
   x = NULL,
   imageId = NULL,
   ID = NULL,
+  nrow = NULL,
+  ncol = NULL,
   ...
 )
 }
@@ -26,6 +28,10 @@ plotMetricPerFov(
 \item{imageId}{the ID of the image/fov}
 
 \item{ID}{the (optional) ID for plotting combinations}
+
+\item{nrow}{the number of rows for the facet wrap}
+
+\item{ncol}{the number of columns for the facet wrap}
 
 \item{...}{Other parameters passed to \code{ggplot2} functions}
 }

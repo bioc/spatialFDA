@@ -140,7 +140,8 @@
 #'
 #' @param spe a `SpatialExperiment` object
 #' @param selection the mark(s) you want to compare
-#' @param subsetby the spe `colData` variable to subset the data by
+#' @param subsetby the spe `colData` variable to subset the data by. This
+#' variable has to be provided, even if there is only one sample.
 #' @param fun the `spatstat` function to compute on the point pattern object
 #' @param marks the marks to consider e.g. cell types
 #' @param rSeq the range of r values to compute the function over
@@ -167,7 +168,7 @@
 #' )
 #' @import dplyr parallel
 #' @importFrom methods is
-calcMetricPerFov <- function(spe, selection, subsetby = NULL, fun, marks = NULL,
+calcMetricPerFov <- function(spe, selection, subsetby, fun, marks = NULL,
     rSeq = NULL, by = NULL, continuous = FALSE, ncores = 1, ...) {
     # type checking of input
     stopifnot(is(spe, "SpatialExperiment"))

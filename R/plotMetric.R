@@ -9,6 +9,8 @@
 #' @param x the x-axis variable to plot
 #' @param imageId the ID of the image/fov
 #' @param ID the (optional) ID for plotting combinations
+#' @param nrow the number of rows for the facet wrap
+#' @param ncol the number of columns for the facet wrap
 #' @param ... Other parameters passed to `ggplot2` functions
 #'
 #' @return a `ggplot` object
@@ -32,26 +34,26 @@
 #' @import dplyr ggplot2
 #' @importFrom methods is
 plotMetricPerFov <- function(metricDf, theo = FALSE, correction = NULL,
-    x = NULL, imageId = NULL, ID = NULL, ...) {
+    x = NULL, imageId = NULL, ID = NULL, nrow = NULL, ncol = NULL, ...) {
     # type checking
     stopifnot(is(metricDf, "data.frame"))
     stopifnot(is(correction, "character"))
     stopifnot(is(x, "character"))
     p <- ggplot(metricDf, aes(
         x = .data[[x]], y = .data[[correction]],
-        group = factor(.data[[imageId]]), ...
+        group = factor(.data[[imageId]])
     ))
     if (!is.null(ID)) {
         p <- p +
-            geom_line(aes(colour = factor(.data[[ID]]))) +
-            facet_wrap(selection ~ ID, ...)
+            geom_line(aes(colour = factor(.data[[ID]])), ...) +
+            facet_wrap(selection ~ ID, nrow, ncol)
     } else {
         p <- p +
             geom_line(aes(colour = factor(.data[[imageId]])), ...)
     }
     p <- p +
         theme_minimal() +
-        theme(legend.position = "none", ...) +
+        theme(legend.position = "none") +
         labs(title = paste0(
             metricDf$fun, " metric for ",
             unique(metricDf$selection)
@@ -76,13 +78,15 @@ plotMetricPerFov <- function(metricDf, theo = FALSE, correction = NULL,
 #' @param x the x-axis variable to plot
 #' @param imageId the ID of the image/fov
 #' @param ID the (optional) ID for plotting combinations
+#' @param nrow the number of rows for the facet wrap
+#' @param ncol the number of columns for the facet wrap
 #' @param ... Other parameters passed to `ggplot2` functions
 #'
 #' @return a ggplot object
 #' @export
 #'
 #' @importFrom methods is
-plotCrossFOV <- function(subFov, theo, correction, x, imageId, ID = NULL, ...) {
+plotCrossFOV <- function(subFov, theo, correction, x, imageId, ID = NULL, ncol = NULL, nrow = NULL, ...) {
     # type checking
     stopifnot(is(subFov, "data.frame"))
     #  Apply plot metric function for each combination
@@ -90,7 +94,7 @@ plotCrossFOV <- function(subFov, theo, correction, x, imageId, ID = NULL, ...) {
         plotMetricPerFov(
             metricDf = subFov[subFov$selection == sel, ],
             theo = theo, correction = correction, x = x,
-            imageId = imageId, ID = ID, ...
+            imageId = imageId, ID = ID, nrow = nrow, ncol = ncol, ...
         )
     })
     #  Count number of marks
@@ -115,6 +119,8 @@ plotCrossFOV <- function(subFov, theo, correction, x, imageId, ID = NULL, ...) {
 #' @param x the x-axis variable to plot
 #' @param imageId the ID of the image/fov
 #' @param ID the (optional) ID for plotting combinations
+#' @param nrow the number of rows for the facet wrap
+#' @param ncol the number of columns for the facet wrap
 #' @param ... Other parameters passed to `ggplot2` functions
 #'
 #' @return a ggplot object
@@ -144,6 +150,8 @@ plotCrossMetricPerFov <- function(
         x = NULL,
         imageId = NULL,
         ID = NULL,
+        nrow = NULL,
+        ncol = NULL,
         ...) {
     # type checking
     stopifnot(is(metricDf, "data.frame"))
@@ -156,7 +164,7 @@ plotCrossMetricPerFov <- function(
         subFov <- metricDf[metricDf[[imageId]] %in% fov, ]
         return(plotCrossFOV(
             subFov = subFov, theo = theo, correction = correction,
-            x = x, imageId = imageId, ID = ID, ...
+            x = x, imageId = imageId, ID = ID, nrow = nrow, ncol = ncol, ...
         ))
     })
 

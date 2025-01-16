@@ -4,7 +4,17 @@
 \alias{plotCrossFOV}
 \title{Creates a nXn plot of the cross metrics per sample}
 \usage{
-plotCrossFOV(subFov, theo, correction, x, imageId, ID = NULL, ...)
+plotCrossFOV(
+  subFov,
+  theo,
+  correction,
+  x,
+  imageId,
+  ID = NULL,
+  ncol = NULL,
+  nrow = NULL,
+  ...
+)
 }
 \arguments{
 \item{subFov}{a subset of the \code{dataframe} to the respective fov}
@@ -18,6 +28,10 @@ plotCrossFOV(subFov, theo, correction, x, imageId, ID = NULL, ...)
 \item{imageId}{the ID of the image/fov}
 
 \item{ID}{the (optional) ID for plotting combinations}
+
+\item{ncol}{the number of columns for the facet wrap}
+
+\item{nrow}{the number of rows for the facet wrap}
 
 \item{...}{Other parameters passed to \code{ggplot2} functions}
 }

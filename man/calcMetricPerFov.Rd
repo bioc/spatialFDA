@@ -7,7 +7,7 @@
 calcMetricPerFov(
   spe,
   selection,
-  subsetby = NULL,
+  subsetby,
   fun,
   marks = NULL,
   rSeq = NULL,
@@ -22,7 +22,8 @@ calcMetricPerFov(
 
 \item{selection}{the mark(s) you want to compare}
 
-\item{subsetby}{the spe \code{colData} variable to subset the data by}
+\item{subsetby}{the spe \code{colData} variable to subset the data by. This
+variable has to be provided, even if there is only one sample.}
 
 \item{fun}{the \code{spatstat} function to compute on the point pattern object}
 
