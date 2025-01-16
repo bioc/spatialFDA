@@ -46,10 +46,12 @@
     pp <- .dfToppp(df, marks = marks, continuous = continuous, window = window)
     if (!continuous) {
         ppSub <- subset(pp, marks %in% selection, drop = TRUE)
-        metaData <- df[, by] %>% unique()
+        metaData <- df[, by] %>% unique() %>% as.data.frame()
+        colnames(metaData) <- by
     } else {
         ppSub <- pp
-        metaData <- df[, by] %>% unique()
+        metaData <- df[, by] %>% unique() %>% as.data.frame()
+        colnames(metaData) <- by
         metaData$gene <- names(df)[names(df) %in% marks]
     }
     # small quality control to only consider pp that have more than 2 points per
