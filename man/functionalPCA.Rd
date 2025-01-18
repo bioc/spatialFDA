@@ -33,8 +33,8 @@ metricRes <- calcMetricPerFov(spe, c("alpha", "beta"),
     c("patient_stage", "patient_id", "image_number"), ncores = 1
 )
 metricRes$ID <- paste0(
-    metricRes$patient_stage, "x", metricRes$patient_id,
-    "x", metricRes$image_number
+  metricRes$patient_stage, "|", metricRes$patient_id,
+  "|", metricRes$image_number
 )
 # prepare data for FDA
 dat <- prepData(metricRes, "r", "rs")

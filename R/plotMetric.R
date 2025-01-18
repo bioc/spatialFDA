@@ -26,6 +26,11 @@
 #'     ),
 #'     ncores = 1
 #' )
+#' # ceate a unique plotting ID
+#' metricRes$ID <- paste0(
+#'  metricRes$patient_stage, "|", metricRes$patient_id
+#' )
+#'
 #' p <- plotMetricPerFov(metricRes,
 #'     correction = "rs", x = "r",
 #'     imageId = "image_number", ID = "ID"
@@ -136,6 +141,11 @@ plotCrossFOV <- function(subFov, theo, correction, x, imageId, ID = NULL, ncol =
 #'     ),
 #'     ncores = 1
 #' )
+#'
+#' metricRes$ID <- paste0(
+#'  metricRes$patient_stage, "|", metricRes$patient_id
+#' )
+#'
 #' metricRes <- subset(metricRes, image_number %in% c(138, 139, 140))
 #' p <- plotCrossMetricPerFov(metricRes,
 #'     theo = TRUE, correction = "rs",
@@ -197,9 +207,10 @@ plotCrossMetricPerFov <- function(
 #' )
 #' # create a unique ID for the data preparation
 #' metricRes$ID <- paste0(
-#'     metricRes$patient_stage, "x", metricRes$patient_id,
-#'     "x", metricRes$image_number
+#'   metricRes$patient_stage, "|", metricRes$patient_id,
+#'   "|", metricRes$image_number
 #' )
+#'
 #' plotFbPlot(metricRes, 'r', 'rs', 'patient_stage')
 #' @importFrom fda fbplot
 #' @importFrom graphics title

@@ -35,8 +35,9 @@ metricRes <- calcMetricPerFov(spe, c("alpha", "beta"),
 )
 # create a unique ID for the data preparation
 metricRes$ID <- paste0(
-    metricRes$patient_stage, "x", metricRes$patient_id,
-    "x", metricRes$image_number
+  metricRes$patient_stage, "|", metricRes$patient_id,
+  "|", metricRes$image_number
 )
+
 plotFbPlot(metricRes, 'r', 'rs', 'patient_stage')
 }

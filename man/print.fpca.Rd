@@ -30,16 +30,17 @@ metricRes <- calcMetricPerFov(spe, c("alpha", "beta"),
     c("patient_stage", "patient_id", "image_number"), ncores = 1
 )
 metricRes$ID <- paste0(
-    metricRes$patient_stage, "x", metricRes$patient_id,
-    "x", metricRes$image_number
+  metricRes$patient_stage, "|", metricRes$patient_id,
+  "|", metricRes$image_number
 )
 # prepare data for FDA
 dat <- prepData(metricRes, "r", "rs")
 
 # drop rows with NA
 dat <- dat |> drop_na()
+
 # create meta info of the IDs
-splitData <- str_split(dat$ID, "x")
+splitData <- strsplit(dat$ID, "|", fixed = TRUE)
 dat$condition <- factor(sapply(splitData, function(x) x[1]))
 dat$patient_id <- factor(sapply(splitData, function(x) x[2]))
 dat$image_id <- factor(sapply(splitData, function(x) x[3]))

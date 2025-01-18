@@ -52,6 +52,11 @@ metricRes <- calcMetricPerFov(spe, c("alpha", "beta"),
     ),
     ncores = 1
 )
+# ceate a unique plotting ID
+metricRes$ID <- paste0(
+ metricRes$patient_stage, "|", metricRes$patient_id
+)
+
 p <- plotMetricPerFov(metricRes,
     correction = "rs", x = "r",
     imageId = "image_number", ID = "ID"

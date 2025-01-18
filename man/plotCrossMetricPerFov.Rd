@@ -53,6 +53,11 @@ metricRes <- calcCrossMetricPerFov(spe, c("alpha", "beta"),
     ),
     ncores = 1
 )
+
+metricRes$ID <- paste0(
+ metricRes$patient_stage, "|", metricRes$patient_id
+)
+
 metricRes <- subset(metricRes, image_number \%in\% c(138, 139, 140))
 p <- plotCrossMetricPerFov(metricRes,
     theo = TRUE, correction = "rs",
