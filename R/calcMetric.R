@@ -148,6 +148,7 @@
 #' @param by the spe `colData` variable(s) to add to the meta data
 #' @param continuous A boolean indicating whether the marks are continuous
 #' defaults to FALSE
+#' @param assay the assay which is used if `continuous = TRUE`
 #' @param ncores the number of cores to use for parallel processing, default = 1
 #' @param ... Other parameters passed to `spatstat.explore` functions
 #'
@@ -166,10 +167,10 @@
 #'     ),
 #'     ncores = 1
 #' )
-#' @import dplyr parallel
+#' @import dplyr parallel SpatialExperiment
 #' @importFrom methods is
 calcMetricPerFov <- function(spe, selection, subsetby, fun, marks = NULL,
-    rSeq = NULL, by = NULL, continuous = FALSE, ncores = 1, ...) {
+    rSeq = NULL, by = NULL, continuous = FALSE, assay = "exprs", ncores = 1, ...) {
     # type checking of input
     stopifnot(is(spe, "SpatialExperiment"))
     stopifnot(is(fun, "character"))
@@ -180,6 +181,15 @@ calcMetricPerFov <- function(spe, selection, subsetby, fun, marks = NULL,
     if (!continuous && sum(!(selection %in% colData(spe)[[marks]])) > 0) {
       stop(paste0("not all marks of ", selection,
                   " are in the colData ", marks,  " of the spe"))
+    }
+    if(continuous) {
+      expr <- SummarizedExperiment::assay(spe, assay)[marks, , drop=FALSE] %>%
+        as.matrix() %>%
+        t() %>%
+        data.frame() %>%
+        magrittr::set_colnames(marks)
+
+      colData(spe) <- colData(spe) %>% cbind(expr)
     }
     df <- .speToDf(spe)
     # we have one case for discrete cell types where we have one column to subset
@@ -225,6 +235,7 @@ calcMetricPerFov <- function(spe, selection, subsetby, fun, marks = NULL,
 #' @param ncores the number of cores to use for parallel processing, default = 1
 #' @param continuous A boolean indicating whether the marks are continuous
 #' defaults to FALSE
+#' @param assay the assay which is used if `continuous = TRUE`
 #' @param ... Other parameters passed to spatstat.explore functions
 #'
 #' @return a dataframe of the `spatstat` metric objects with the radius r, the
@@ -247,7 +258,7 @@ calcMetricPerFov <- function(spe, selection, subsetby, fun, marks = NULL,
 calcCrossMetricPerFov <- function(
         spe, selection, subsetby = NULL, fun,
         marks = NULL, rSeq = NULL, by = NULL,
-        ncores = 1, continuous = FALSE, ...) {
+        ncores = 1, continuous = FALSE, assay = "exprs", ...) {
     # type checking of input
     stopifnot(is(spe, "SpatialExperiment"))
     stopifnot(is(fun, "character"))
@@ -264,7 +275,7 @@ calcCrossMetricPerFov <- function(
             calcMetricPerFov(
                 spe = spe, selection = x, subsetby = subsetby, fun = fun,
                 marks = marks, rSeq = rSeq, by = by, ncores = ncores,
-                continuous = continuous, ...
+                continuous = continuous, assay, ...
             )
         })
         # Bind the data and return
@@ -273,7 +284,7 @@ calcCrossMetricPerFov <- function(
         # This creates a grid with all possible 2 way combinations
         ls <- apply(expand.grid(selection, selection), 1, function(x) {
             return(c(x[1], x[2]))
-        }) |> t()
+        }) %>% t()
 
         # calculate the metric per FOV
         resLs <- apply(ls, 1, function(x) {

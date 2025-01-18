@@ -13,6 +13,7 @@ calcMetricPerFov(
   rSeq = NULL,
   by = NULL,
   continuous = FALSE,
+  assay = "exprs",
   ncores = 1,
   ...
 )
@@ -35,6 +36,8 @@ variable has to be provided, even if there is only one sample.}
 
 \item{continuous}{A boolean indicating whether the marks are continuous
 defaults to FALSE}
+
+\item{assay}{the assay which is used if \code{continuous = TRUE}}
 
 \item{ncores}{the number of cores to use for parallel processing, default = 1}
 

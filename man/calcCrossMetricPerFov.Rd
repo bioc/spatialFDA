@@ -14,6 +14,7 @@ calcCrossMetricPerFov(
   by = NULL,
   ncores = 1,
   continuous = FALSE,
+  assay = "exprs",
   ...
 )
 }
@@ -36,6 +37,8 @@ calcCrossMetricPerFov(
 
 \item{continuous}{A boolean indicating whether the marks are continuous
 defaults to FALSE}
+
+\item{assay}{the assay which is used if \code{continuous = TRUE}}
 
 \item{...}{Other parameters passed to spatstat.explore functions}
 }

@@ -76,7 +76,7 @@ In this vignette we will analyse a diabetes dataset acquired by imaging mass cyt
 
 ## Loading the data
 
-The Damond et al. [@damondMapHumanType2019] dataset is easily loaded via the `r BiocStyle::Biocpkg('imcdatasets')` package. The entire dataset can be loaded by setting `full_dataset = TRUE`. For computational reasons, one can reduce to three patients as well by setting this flag to `FALSE`. The package offers multiple datatypes, we will use the `r BiocStyle::Biocpkg('SpatialExperiment')` (SPE) object.
+The Damond et al. [@damondMapHumanType2019] dataset is easily loaded via the `r BiocStyle::Biocpkg('imcdatasets')` package. The entire dataset can be loaded by setting `full_dataset = TRUE`. For computational reasons, one can reduce to three patients as well by setting this flag to `FALSE`. We will use the small version to show the functionality of the package even though the statistical power of results is greatly reduced by considering only 100 out of 845 images. For a more interesting use case we encourage readers to load the full dataset for a multi-condition/multi-sample example. The package offers multiple datatypes, we will use the `r BiocStyle::Biocpkg('SpatialExperiment')` (SPE) object.
 
 ```{r loading, warning = FALSE, message = FALSE}
 # load the dataset as SpatialExperiment object
@@ -161,7 +161,11 @@ metricRes %>% head(3)
 
 We can visualise this metric with `plotMetricPerFov` function. Here, we need to specify which border correction we want to plot and what the x-axis is. Both can vary from function to function.
 
-```{r plotLfunction, warning = FALSE}
+```{r plotLfunction, warning = FALSE, fig.width=8, fig.height=8}
+# create a unique plotting ID
+metricRes$ID <- paste0(
+    metricRes$patient_stage, "|", metricRes$patient_id
+)
 # change levels for plotting
 metricRes$ID <- factor(metricRes$ID, levels = c("Non-diabetic|6126", 
                                                 "Non-diabetic|6134", 
@@ -190,14 +194,18 @@ For spacing metrics, we get different border corrections but otherwise the outpu
 metricRes <- calcMetricPerFov(spe = spe, selection = c("alpha", "Tc"),
                               subsetby = "image_number", fun = "Gcross", 
                               marks = "cell_type",
-                              rSeq = seq(0, 50, length.out = 50),
-                              by = c("patient_stage", "patient_id", 
-                                     "image_number"), 
+                              rSeq = seq(0, 50, length.out = 50), 
+                              by = c("patient_stage", "patient_id",
+                                     "image_number"),
                               ncores = 1)
 metricRes %>% head(3)
 ```
 
-```{r plotGfunction, warning = FALSE}
+```{r plotGfunction, warning = FALSE, fig.width=8, fig.height=8}
+# create a unique plotting ID
+metricRes$ID <- paste0(
+    metricRes$patient_stage, "|", metricRes$patient_id
+)
 # change levels for plotting
 metricRes$ID <- factor(metricRes$ID, levels = c("Non-diabetic|6126", 
                                                 "Non-diabetic|6134", 
@@ -213,15 +221,14 @@ In the nearest-neighbor distance function, we see a strong difference between on
 
 # Functional boxplot
 
-
 Looking at raw spatial statistics curves can be challenging. In order to summarise this information, we can plot functional boxplots by aggregating the curves into boxplots via a user-defined variable `aggregate_by`. We use the `fbplot` function from the `r BiocStyle::CRANpkg('fda')` package [@sun2011functional; @ramsay2024fda].
 
 ```{r, funcBoxPlot, warning = FALSE, results='hide'}
-# create a unique ID for each row
-metricRes$ID <- with(metricRes, 
-                     paste0(patient_stage, "x", 
-                            patient_id, "x",image_number))
-
+# create a unique ID per row in the dataframe
+metricRes$ID <- paste0(
+    metricRes$patient_stage, "x", metricRes$patient_id,
+    "x", metricRes$image_number
+)
 #removing field of views that have as a curve only zeros - these are cases where
 #there is no cells of one type
 metricRes <- metricRes %>% group_by(ID) %>% filter(sum(km) >= 1)
@@ -238,10 +245,6 @@ Another analysis that can be performed is functional principal componentent anal
 ```{r fPCA, warning = FALSE}
 # filter out all rows that have a constant zero part - all r<10
 metricRes <- metricRes %>% filter(r > 10)
-# create a unique ID for each row
-metricRes$ID <- with(metricRes,
-                     paste0(patient_stage, "x",
-                            patient_id, "x", image_number))
 
 # prepare dataframe from calcMetricRes to be in the correct format for pffr
 dat <- prepData(metricRes, "r", "km")
@@ -336,11 +339,11 @@ summary(mdl)
 
 plotLs <- lapply(colnames(mm), plotMdl, mdl = mdl,
                  shift = mdl$coefficients[["(Intercept)"]])
-wrap_plots(plotLs, nrow = 3)
+wrap_plots(plotLs, nrow = 3, axes = 'collect')
 ```
 
 
-We note that, according to the estimated confidence bands, there is no difference in the $G$ function between non-diabetic and long-duration T1D samples, but a difference between non-diabetic and onset T1D according to the model summary. This difference is non-significant according to the point wise confidence bands in the coefficients plots. The point wise confidence bands are a limitation of this method and could be improved with either bootstrapping or continuous confidence bands [@liebl2023fast]. Nevertheless, we get an indication that this difference is probably due to interactions at larger radii ($r>40$) . Thus, we see not only that a spatial difference in co-localisation of $\alpha$ and cytotoxic T cells is statistically significant but also at which spatial scale this difference occurs.
+We note that there is a small difference in the $G$ function between non-diabetic and long-duration T1D samples, but a strong difference between non-diabetic and onset T1D according to the model summary. The point wise confidence bands are a limitation of this method and could be improved with either bootstrapping or continuous confidence bands [@liebl2023fast]. Thus, we see not only that a spatial difference in co-localisation of $\alpha$ and cytotoxic T cells is statistically significant but also at which spatial scale this difference occurs.
 
 ## Model evaluation
 
@@ -365,16 +368,10 @@ data <- data %>% left_join(splitData %>%
 p <- ggplot(data, aes(x.vec, value, colour = patient_id)) +
   geom_point(aes(shape=factor(condition))) +
   theme_light() + 
+  geom_smooth(aes(group = 1), col = 'black') +
   xlab("r [µm]")
 
-q <- ggplot(data, aes(x.vec, value, colour = condition)) +
-  geom_point() +
-  theme_light() +
-  geom_smooth(aes(group = condition)) +
-  geom_smooth(aes(group = 1), col = 'black') + 
-  xlab("r [µm]")
-
-p|q
+p
 ```
 
 We note that there is still some structure in these intercepts, which is most likely due to identifiability problems between the global and random intercepts. 

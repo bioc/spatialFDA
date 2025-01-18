@@ -22,11 +22,6 @@ test_that("Output contains correction for discrete single mark", {
 test_that("Output contains correction for continuous single mark", {
   # add continuous mark to colData
   protein <- "CD31"
-  expr <- assay(spe, "exprs")[protein, ] %>%
-    as.matrix() %>%
-    data.frame() %>%
-    rename("CD31" = ".")
-  colData(spe) <- colData(spe) %>% cbind(expr)
 
   rSeq <- seq(0, 50, length.out = 50)
   metricRes <- calcMetricPerFov(spe, "alpha",
