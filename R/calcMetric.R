@@ -291,7 +291,7 @@ calcCrossMetricPerFov <- function(
             calcMetricPerFov(
                 spe = spe, selection = x, subsetby = subsetby, fun = fun,
                 marks = marks, rSeq = rSeq, by = by, ncores = ncores,
-                continuous = continuous
+                continuous = continuous, ...
             )
         })
 
