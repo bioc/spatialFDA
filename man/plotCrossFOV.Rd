@@ -13,6 +13,7 @@ plotCrossFOV(
   ID = NULL,
   ncol = NULL,
   nrow = NULL,
+  legend.position = "none",
   ...
 )
 }
@@ -32,6 +33,8 @@ plotCrossFOV(
 \item{ncol}{the number of columns for the facet wrap}
 
 \item{nrow}{the number of rows for the facet wrap}
+
+\item{legend.position}{the position of the legend of the plot}
 
 \item{...}{Other parameters passed to \code{ggplot2} functions}
 }

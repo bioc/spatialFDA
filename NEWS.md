@@ -4,6 +4,7 @@
 * added option to extract gene expression directly in `calcMetricPerFov` if
 `continuous = TRUE`
 * small bug fix in `calcMetricPerFov` to pass `...` in all cases
+* added variables `legend.position` and `ncol` to `plotMetricPerFov`
 
 # spatialFDA 0.99.3
 * adjusted `by` variable to work with length 1

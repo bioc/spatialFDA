@@ -11,6 +11,7 @@
 #' @param ID the (optional) ID for plotting combinations
 #' @param nrow the number of rows for the facet wrap
 #' @param ncol the number of columns for the facet wrap
+#' @param legend.position the position of the legend of the plot
 #' @param ... Other parameters passed to `ggplot2` functions
 #'
 #' @return a `ggplot` object
@@ -39,7 +40,8 @@
 #' @import dplyr ggplot2
 #' @importFrom methods is
 plotMetricPerFov <- function(metricDf, theo = FALSE, correction = NULL,
-    x = NULL, imageId = NULL, ID = NULL, nrow = NULL, ncol = NULL, ...) {
+    x = NULL, imageId = NULL, ID = NULL, nrow = NULL, ncol = NULL,
+    legend.position = "none", ...) {
     # type checking
     stopifnot(is(metricDf, "data.frame"))
     stopifnot(is(correction, "character"))
@@ -58,7 +60,7 @@ plotMetricPerFov <- function(metricDf, theo = FALSE, correction = NULL,
     }
     p <- p +
         theme_minimal() +
-        theme(legend.position = "none") +
+        theme(legend.position = legend.position) +
         labs(title = paste0(
             metricDf$fun, " metric for ",
             unique(metricDf$selection)
@@ -85,13 +87,16 @@ plotMetricPerFov <- function(metricDf, theo = FALSE, correction = NULL,
 #' @param ID the (optional) ID for plotting combinations
 #' @param nrow the number of rows for the facet wrap
 #' @param ncol the number of columns for the facet wrap
+#' @param legend.position the position of the legend of the plot
 #' @param ... Other parameters passed to `ggplot2` functions
 #'
 #' @return a ggplot object
 #' @export
 #'
 #' @importFrom methods is
-plotCrossFOV <- function(subFov, theo, correction, x, imageId, ID = NULL, ncol = NULL, nrow = NULL, ...) {
+plotCrossFOV <- function(subFov, theo, correction, x, imageId, ID = NULL,
+                         ncol = NULL, nrow = NULL,
+                         legend.position = "none", ...) {
     # type checking
     stopifnot(is(subFov, "data.frame"))
     #  Apply plot metric function for each combination
@@ -99,7 +104,8 @@ plotCrossFOV <- function(subFov, theo, correction, x, imageId, ID = NULL, ncol =
         plotMetricPerFov(
             metricDf = subFov[subFov$selection == sel, ],
             theo = theo, correction = correction, x = x,
-            imageId = imageId, ID = ID, nrow = nrow, ncol = ncol, ...
+            imageId = imageId, ID = ID, nrow = nrow, ncol = ncol,
+            legend.position = legend.position, ...
         )
     })
     #  Count number of marks
@@ -126,6 +132,7 @@ plotCrossFOV <- function(subFov, theo, correction, x, imageId, ID = NULL, ncol =
 #' @param ID the (optional) ID for plotting combinations
 #' @param nrow the number of rows for the facet wrap
 #' @param ncol the number of columns for the facet wrap
+#' @param legend.position the position of the legend of the plot
 #' @param ... Other parameters passed to `ggplot2` functions
 #'
 #' @return a ggplot object
@@ -162,6 +169,7 @@ plotCrossMetricPerFov <- function(
         ID = NULL,
         nrow = NULL,
         ncol = NULL,
+        legend.position = "none",
         ...) {
     # type checking
     stopifnot(is(metricDf, "data.frame"))
@@ -174,7 +182,8 @@ plotCrossMetricPerFov <- function(
         subFov <- metricDf[metricDf[[imageId]] %in% fov, ]
         return(plotCrossFOV(
             subFov = subFov, theo = theo, correction = correction,
-            x = x, imageId = imageId, ID = ID, nrow = nrow, ncol = ncol, ...
+            x = x, imageId = imageId, ID = ID, nrow = nrow, ncol = ncol,
+            legend.position = legend.position, ...
         ))
     })
 
