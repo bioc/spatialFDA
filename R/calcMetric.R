@@ -112,17 +112,16 @@
             error = function(e) {
                 print(e)
                 metricRes <- data.frame(
-                  r = rSeq,
-                  fun = fun,
-                  row.names = seq_along(rSeq)
+                  r = 0,
+                  fun = fun
                 )
             }
         )
     } else {
+      # TODO: the row.names are off and do funny things - need to fix this still
         metricRes <- data.frame(
-            r = rSeq,
-            fun = fun,
-            row.names = seq_along(rSeq)
+            r = 0,
+            fun = fun
         )
     }
     metricRes <- cbind(metricRes, metaData)
@@ -130,6 +129,7 @@
     centroid <- spatstat.geom::centroid.owin(ppSub$window)
     metricRes$centroidx <- centroid$x
     metricRes$centroidy <- centroid$y
+    rownames(metricRes) <- NULL
     return(metricRes)
 }
 

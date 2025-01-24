@@ -1,3 +1,7 @@
+# spatialFDA 0.99.5
+* change in how failures in `calcMetricPerFov` are handled. Works now as well
+if `rSeq = NULL`
+
 # spatialFDA 0.99.4
 * variable `ID` is no longer created in `calcMetricPerFov`
 * adjusted examples and vignette to the above
