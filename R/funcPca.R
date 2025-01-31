@@ -170,7 +170,7 @@ plotFpca <- function(data, res, colourby = NULL, labelby = NULL) {
 #' mdl
 print.fpca <- function(x, ...) {
     cat(paste0("Functional principal components analysis ",
-                 "result from `fpca.face` of `refund` \n"))
+                 "result from `fpca.sc` of `refund` \n"))
     cat(paste0("class: ", class(x), "\n"))
     cat(paste0("pve: ", round(x$pve, digits = 4), "\n"))
     cat(paste0("number of PCs: ", x$npc, "\n"))

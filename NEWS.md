@@ -1,3 +1,6 @@
+# spatialFDA 0.99.6
+* small error correction in show fPCA method
+
 # spatialFDA 0.99.5
 * change in how failures in `calcMetricPerFov` are handled. Works now as well
 if `rSeq = NULL`

@@ -262,6 +262,8 @@ dat <- cbind(dat, splitData)
 dat <- dat |> drop_na()
 # calculate the fPCA
 pca <- functionalPCA(dat = dat, r = metricRes$r |> unique())
+evalues <- pca$evalues
+efunctions <- pca$efunctions
 # plot the mean curve and the two first eigenfunctions
 p_mu <- ggplot(data.frame(r = unique(metricRes$r), mu = pca$mu), 
                aes(x = r, y = mu)) +
@@ -321,17 +323,19 @@ For the family we will use a quasi-likelihood distribution where the variance is
 In this context we need to specify a design matrix and contrasts. 
 
 ```{r funcGamG, fig.height=10, warning = FALSE}
+library('refund')
 # create a design matrix
 mm <- model.matrix(~condition, data = dat)
 colnames(mm)[1] <- "Intercept"
+mm %>% head()
 
 r <- metricRes$r |> unique()
 # fit the model
 mdl <- functionalGam(
     data = dat, x = r,
     designmat = mm, weights = dat$npoints,
-    formula = formula(Y ~ conditionLong_duration +
-        conditionOnset + (s(patient_id, bs = "re"))),
+    formula = formula(Y ~ 1 + conditionLong_duration +
+                          conditionOnset + s(patient_id, bs = "re")),
     family = quasi(link = "identity", variance = "mu^2"),
     algorithm = "gam"
 )
@@ -359,7 +363,7 @@ In these model diagnostics, we note that there is still some variability in the 
 
 In the functional additive mixed model, we have a specified global intercept varying over the domain $r$ as well as functional random intercepts varying over the domain $r$ per grouping variable `patient_id`. We can plot these smooth estimates of the random intercepts.
 
-```{r intercept, warning = FALSE}
+```{r intercept, warning = FALSE, eval = TRUE}
 # look at the smooth random intercepts per patient
 data <- coef(mdl)$smterms$`s(patient_id)`$coef
 data <- data %>% left_join(splitData %>% 
