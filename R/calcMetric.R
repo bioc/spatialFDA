@@ -45,14 +45,14 @@
 
     pp <- .dfToppp(df, marks = marks, continuous = continuous, window = window)
     if (!continuous) {
-        ppSub <- subset(pp, marks %in% selection, drop = TRUE)
-        metaData <- df[, by] %>% unique() %>% as.data.frame()
+        ppSub <- base::subset(pp, marks %in% selection, drop = TRUE)
+        metaData <- df[, by] %>% base::unique() %>% as.data.frame()
         colnames(metaData) <- by
     } else {
         ppSub <- pp
-        metaData <- df[, by] %>% unique() %>% as.data.frame()
-        colnames(metaData) <- by
-        metaData$gene <- names(df)[names(df) %in% marks]
+        metaData <- df[, by] %>% base::unique() %>% as.data.frame()
+        base::colnames(metaData) <- by
+        metaData$gene <- base::names(df)[base::names(df) %in% marks]
     }
     # small quality control to only consider pp that have more than 2 points per
     # fov and more than one unique mark and that each mark has more than one point
@@ -60,8 +60,8 @@
         ((length(unique(
             spatstat.geom::marks(ppSub)
         )) > 1 &&
-            sum(table(ppSub$marks) > 0) > 1) ||
-            length(selection) == 1)) {
+            base::sum(base::table(ppSub$marks) > 0) > 1) ||
+            base::length(selection) == 1)) {
         metricRes <- tryCatch(
             {
                 metricRes <- do.call(fun,
@@ -85,8 +85,8 @@
         )
     # This handles the case when we do cross functions for the same type
     } else if (spatstat.geom::npoints(ppSub) > 2 &&
-        length(unique(selection)) == 1 &&
-        length(selection) > 1) {
+        base::length(base::unique(selection)) == 1 &&
+        base::length(selection) > 1) {
         metricRes <- tryCatch(
             {
                 # here we use pp, otherwise there are problems with the
@@ -170,7 +170,8 @@
 #' @import dplyr parallel SpatialExperiment
 #' @importFrom methods is
 calcMetricPerFov <- function(spe, selection, subsetby, fun, marks = NULL,
-    rSeq = NULL, by = NULL, continuous = FALSE, assay = "exprs", ncores = 1, ...) {
+    rSeq = NULL, by = NULL, continuous = FALSE, assay = "exprs", ncores = 1,
+    ...) {
     # type checking of input
     stopifnot(is(spe, "SpatialExperiment"))
     stopifnot(is(fun, "character"))
@@ -178,7 +179,7 @@ calcMetricPerFov <- function(spe, selection, subsetby, fun, marks = NULL,
     stopifnot(is(ncores, "numeric"))
 
     # check if the provide marks are in the column marks of spe colData
-    if (!continuous && sum(!(selection %in% colData(spe)[[marks]])) > 0) {
+    if (!continuous && base::sum(!(selection %in% colData(spe)[[marks]])) > 0) {
       stop(paste0("not all marks of ", selection,
                   " are in the colData ", marks,  " of the spe"))
     }
@@ -194,10 +195,11 @@ calcMetricPerFov <- function(spe, selection, subsetby, fun, marks = NULL,
     df <- .speToDf(spe)
     # we have one case for discrete cell types where we have one column to subset
     if (length(subsetby) == 1) {
-        dfLs <- split(df, df[[subsetby]])
+        dfLs <- base::split(df, df[[subsetby]])
     } else {
         dfLs <- purrr::map(subsetby, ~ df %>%
-            select(all_of(setdiff(names(df), subsetby)), .x))
+            dplyr::select(dplyr::all_of(
+              dplyr::setdiff(base::names(df), subsetby)), .x))
     }
     metricDf <- parallel::mclapply(dfLs, function(dfSub) {
         metricRes <- .extractMetric(
@@ -211,7 +213,7 @@ calcMetricPerFov <- function(spe, selection, subsetby, fun, marks = NULL,
             ...
         ) %>% as.data.frame()
         return(metricRes)
-    }, mc.cores = ncores) %>% bind_rows()
+    }, mc.cores = ncores) %>% dplyr::bind_rows()
     # store metadata of the calculation in the dataframe
     metricDf$fun <- fun
     metricDf$selection <- paste(selection, collapse = " and ")
@@ -279,7 +281,7 @@ calcCrossMetricPerFov <- function(
             )
         })
         # Bind the data and return
-        return(bind_rows(resLs))
+        return(dplyr::bind_rows(resLs))
     } else {
         # This creates a grid with all possible 2 way combinations
         ls <- apply(expand.grid(selection, selection), 1, function(x) {
@@ -296,6 +298,6 @@ calcCrossMetricPerFov <- function(
         })
 
         # Bind the data and return
-        return(bind_rows(resLs))
+        return(dplyr::bind_rows(resLs))
     }
 }

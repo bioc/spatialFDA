@@ -4,16 +4,18 @@
 \alias{functionalPCA}
 \title{Functional Principal Component Analysis}
 \usage{
-functionalPCA(data, r)
+functionalPCA(data, r, ...)
 }
 \arguments{
 \item{data}{a data object for functional data analysis containing at least
 the functional response $Y$.}
 
 \item{r}{the functional domain}
+
+\item{...}{Other parameters passed to \code{fpca.sc} functions}
 }
 \value{
-a list with components of fpca.face
+a list with components of fpca.sc
 }
 \description{
 A function that takes as input the output of \code{calcMetricPerFov} which has to

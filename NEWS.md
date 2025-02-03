@@ -1,3 +1,7 @@
+# spatialFDA 0.99.7
+* explicit package naming for functions to make compatible with linux distributions
+* possible to pass `...` parameters to fPCA method
+
 # spatialFDA 0.99.6
 * small error correction in show fPCA method
 

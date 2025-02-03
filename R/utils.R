@@ -27,12 +27,12 @@
     pp <- spatstat.geom::as.ppp(data.frame(x = df$x, y = df$y),
         W = spatstat.geom::owin(
             c(
-                min(df$x) - 1,
-                max(df$x) + 1
+                base::min(df$x) - 1,
+                base::max(df$x) + 1
             ),
             c(
-                min(df$y) - 1,
-                max(df$y) + 1
+                base::min(df$y) - 1,
+                base::max(df$y) + 1
             )
         )
     )
@@ -40,7 +40,8 @@
     if (!continuous) {
         spatstat.geom::marks(pp) <- factor(df[[marks]])
     } else {
-        spatstat.geom::marks(pp) <- subset(df, select = names(df) %in% marks)
+        spatstat.geom::marks(pp) <- base::subset(df, select =
+                                                   names(df) %in% marks)
     }
     # if window exist, set is as new window and potentially exclude some points
     if (!is.null(window)) {

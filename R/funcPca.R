@@ -7,8 +7,9 @@
 #' @param data a data object for functional data analysis containing at least
 #' the functional response $Y$.
 #' @param r the functional domain
+#' @param ... Other parameters passed to `fpca.sc` functions
 #'
-#' @return a list with components of fpca.face
+#' @return a list with components of fpca.sc
 #' @export
 #'
 #' @examples
@@ -43,12 +44,12 @@
 #' )
 #' @import dplyr
 #' @importFrom methods is
-functionalPCA <- function(data, r) {
+functionalPCA <- function(data, r, ...) {
     stopifnot(is(data, "data.frame"))
     stopifnot(is(r, "vector"))
     # calculate the fPCA - this is a bit a pointless wrapper until now
     res <- refund::fpca.sc(
-        Y = data$Y, center = TRUE, argvals = r
+        Y = data$Y, center = TRUE, argvals = r, ...
     )
     return(res)
 }
