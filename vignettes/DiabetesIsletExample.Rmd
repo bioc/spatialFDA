@@ -68,6 +68,8 @@ library("tidyr")
 library("stringr")
 library("dplyr")
 library("patchwork")
+
+set.seed(1234)
 ```
 
 # Getting started
@@ -82,7 +84,9 @@ The Damond et al. [@damondMapHumanType2019] dataset is easily loaded via the `r 
 # load the dataset as SpatialExperiment object
 spe <- imcdatasets::Damond_2019_Pancreas("spe", full_dataset = TRUE)
 # subset the example for computational reasons
-spe <- subset(spe, ,patient_id %in% c(6089,6180,6126,6134,6228,6362))
+spe <- subset(spe, ,patient_id %in% c(6089,6180,6126,6134,6228,6414))
+# set cell types as factors
+colData(spe)$cell_type <- as.factor(colData(spe)$cell_type) 
 ```
 
 ## Visualising the raw data
@@ -169,7 +173,7 @@ metricRes$ID <- paste0(
 # change levels for plotting
 metricRes$ID <- factor(metricRes$ID, levels = c("Non-diabetic|6126", 
                                                 "Non-diabetic|6134", 
-                                                "Onset|6228","Onset|6362",
+                                                "Onset|6228","Onset|6414",
                                                 "Long-duration|6089", 
                                                 "Long-duration|6180"))
 # plot metrics
@@ -209,11 +213,11 @@ metricRes$ID <- paste0(
 # change levels for plotting
 metricRes$ID <- factor(metricRes$ID, levels = c("Non-diabetic|6126", 
                                                 "Non-diabetic|6134", 
-                                                "Onset|6228","Onset|6362",
+                                                "Onset|6228","Onset|6414",
                                                 "Long-duration|6089", 
                                                 "Long-duration|6180"))
 # plot metrics
-plotMetricPerFov(metricRes, correction = "km", x = "r",
+plotMetricPerFov(metricRes, correction = "rs", x = "r",
                  imageId = "image_number", ID = "ID", ncol = 2)
 ```
 
@@ -231,9 +235,9 @@ metricRes$ID <- paste0(
 )
 #removing field of views that have as a curve only zeros - these are cases where
 #there is no cells of one type
-metricRes <- metricRes %>% group_by(ID) %>% filter(sum(km) >= 1)
+metricRes <- metricRes %>% dplyr::group_by(ID) %>% dplyr::filter(sum(rs) >= 1)
 
-collector <- plotFbPlot(metricRes, "r", "km", "patient_stage")
+collector <- plotFbPlot(metricRes, "r", "rs", "patient_stage")
 ```
 
 The functional boxplot shows that onset $G$-curves are more variable than the corresponding long-duration and non-diabetic curves. We note as well, that the variability is heteroscedastic along the domain (i.e., variance increases with radius), which is undesirable for our statistical modelling. Therefore, we can e.g. apply a variance stabilising transformation to our data or model this variance in the statistical model.
@@ -247,7 +251,7 @@ Another analysis that can be performed is functional principal componentent anal
 metricRes <- metricRes %>% filter(r > 10)
 
 # prepare dataframe from calcMetricRes to be in the correct format for pffr
-dat <- prepData(metricRes, "r", "km")
+dat <- prepData(metricRes, "r", "rs")
 
 # create meta info of the IDs
 splitData <- dat$ID %>%
@@ -261,7 +265,7 @@ dat <- cbind(dat, splitData)
 # drop rows with NA
 dat <- dat |> drop_na()
 # calculate the fPCA
-pca <- functionalPCA(dat = dat, r = metricRes$r |> unique())
+pca <- functionalPCA(dat = dat, r = metricRes$r |> unique(), pve = 0.995)
 evalues <- pca$evalues
 efunctions <- pca$efunctions
 # plot the mean curve and the two first eigenfunctions
@@ -296,7 +300,7 @@ In the biplot above we get a very basic differentiation of the $G$ curves. Onset
 
 # Functional additive mixed models
 
-The $L$ function above showed no clear difference between the three conditions whereas the $G$ function showed a strong difference between onset T1D and the two other conditions. In order to test these differences we will use generalised functional additive mixed models. These are generalisations of standard additive mixed models to compare functions over their entire domain. The package that we use is the `r BiocStyle::CRANpkg('refund')` package [@scheiplFunctionalAdditiveMixed2015; @scheiplGeneralizedFunctionalAdditive2016].
+The $L$ function above showed no clear difference between the three conditions whereas the $G$ function showed a strong difference between onset T1D and the two other conditions. In order to test these differences we will use generalised functional additive mixed models. These are generalisations of standard additive mixed models to compare functions over their entire domain. The package that we use is the `r BiocStyle::CRANpkg('refund')` package [@scheiplFunctionalAdditiveMixed2015; @scheiplGeneralizedFunctionalAdditive2016; @refund2024].
 
 The model implemented here is of the form:
 
@@ -320,7 +324,9 @@ With the following terms:
 
 For the family we will use a quasi-likelihood distribution where the variance is modeled as quadratic to the mean. We do this to account for the heteroscedastic variance along the domain.
 
-In this context we need to specify a design matrix and contrasts. 
+In this context we need to specify a design matrix and contrasts. For the
+functional random intercepts we use a principal componend-based estimation 
+(pve = 0.995) from `refund` [@refund2024].
 
 ```{r funcGamG, fig.height=10, warning = FALSE}
 library('refund')
@@ -335,7 +341,9 @@ mdl <- functionalGam(
     data = dat, x = r,
     designmat = mm, weights = dat$npoints,
     formula = formula(Y ~ 1 + conditionLong_duration +
-                          conditionOnset + s(patient_id, bs = "re")),
+                          conditionOnset + pcre(id=patient_id, 
+                                                efunctions=efunctions, 
+                                                evalues=evalues, yind=r)),
     family = quasi(link = "identity", variance = "mu^2"),
     algorithm = "gam"
 )
@@ -365,7 +373,10 @@ In the functional additive mixed model, we have a specified global intercept var
 
 ```{r intercept, warning = FALSE, eval = TRUE}
 # look at the smooth random intercepts per patient
-data <- coef(mdl)$smterms$`s(patient_id)`$coef
+#data <- coef(mdl)$smterms$`s(patient_id)`$coef
+data <- coef(mdl)$smterms$`pcre(patient_id,efunctions,evalues,r)`$coef %>%
+  dplyr::rename(patient_id = "patient_id.vec")
+
 data <- data %>% left_join(splitData %>% 
                              select(patient_id, condition) %>% unique)
 
@@ -378,7 +389,9 @@ p <- ggplot(data, aes(x.vec, value, colour = patient_id)) +
 p
 ```
 
-We note that there is still some structure in these intercepts, which is most likely due to identifiability problems between the global and random intercepts. 
+In this implementation, we have used principal component based random errors as
+implemented in `pcre` from `refund`. These random errors are constrained to zero 
+over $t$. 
 
 ```{r sessionInfo}
 sessionInfo()

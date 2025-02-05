@@ -1,4 +1,8 @@
 # spatialFDA 0.99.7
+* more packages explicitly named
+* vignette shows use of PCA based random errors and exchanged one sample
+
+# spatialFDA 0.99.7
 * explicit package naming for functions to make compatible with linux distributions
 * possible to pass `...` parameters to fPCA method
 

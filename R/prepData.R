@@ -35,9 +35,9 @@ prepData <- function(metricRes, x, y) {
     stopifnot(is(y, "character"))
     # extract the functional response matrix
     mat <- metricRes %>%
-        select("ID", x, y) %>%
-        spread("ID", y) %>%
-        select(!x)
+        dplyr::select("ID", x, y) %>%
+        tidyr::spread("ID", y) %>%
+        dplyr::select(!x)
     # create a dataframe as required by pffr
     # the colnames of the matrix are the new row IDs
     dat <- data.frame(ID = colnames(mat))
@@ -45,16 +45,16 @@ prepData <- function(metricRes, x, y) {
     dat$Y <- t(mat)
     # extract the number of points as weights
     weights <- metricRes %>%
-      select("ID", "npoints") %>%
+      dplyr::select("ID", "npoints") %>%
       unique()
     # add the weights to the data.frame
-    dat <- dat %>% left_join(weights, by = "ID")
+    dat <- dat %>% dplyr::left_join(weights, by = "ID")
     # extract the coordinates
     coords <- metricRes %>%
-        select("ID", "centroidx", "centroidy") %>%
+        dplyr::select("ID", "centroidx", "centroidy") %>%
         unique()
     # add the coordinates to the data.frame
-    dat <- dat %>% left_join(coords, by = "ID")
+    dat <- dat %>% dplyr::left_join(coords, by = "ID")
 
     return(dat)
 }
