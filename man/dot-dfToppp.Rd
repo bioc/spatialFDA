@@ -26,7 +26,8 @@ A ppp object for use with \code{spatstat} functions
 Convert SpatialExperiment object to ppp object
 }
 \examples{
-spe <- imcdatasets::Damond_2019_Pancreas("spe", full_dataset = FALSE)
+# retrieve example data from Damond et al. (2019)
+spe <- .loadExample()
 speSub <- subset(spe, , image_number == "138")
 dfSub <- .speToDf(speSub)
 pp <- .dfToppp(dfSub, marks = "cell_type")

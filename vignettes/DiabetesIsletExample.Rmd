@@ -38,7 +38,7 @@ knitr::opts_chunk$set(
 
 This vignette demonstrates how to use `r BiocStyle::Biocpkg('spatialFDA')` to perform functional data analysis on spatial statistics metrics. The main aim of this package is to detect differential spatial arrangements within and between celltypes given several samples/conditions. It does so by calculating spatial statistics metrics via the `r BiocStyle::CRANpkg('spatstat')` package and comparing differences using functional additive mixed models as implemented in the `r BiocStyle::CRANpkg('refund')` package [@spatstat2005; @refund2024].
 
-The use case is a dataset from the `r BiocStyle::Biocpkg('imcdatasets')` package, which contains images from 12 human donors [@damondMapHumanType2019]. 
+The use case is a dataset from @damondMapHumanType2019 which contains images from 12 human donors. 
 
 This package is similar to other packages in `python` and `R`. The following table shows the main differences in terms of functionality [@ali2024graphcompass; @canete2022spicyr; @wrobel2024mxfda]. 
 
@@ -74,16 +74,16 @@ set.seed(1234)
 
 # Getting started
 
-In this vignette we will analyse a diabetes dataset acquired by imaging mass cytometry (IMC) as developed by Damond et al. [@damondMapHumanType2019]. The dataset contains images from 12 human donors, 4 healthy and 8 with type 1 diabetes (T1D). With IMC, 35 markers were measured at single cell resolution [@damondMapHumanType2019].
+In this vignette we will analyse a diabetes dataset acquired by imaging mass cytometry (IMC) as acquired by @damondMapHumanType2019. The dataset contains images from 12 human donors, 4 healthy and 8 with type 1 diabetes (T1D). With IMC, 35 markers were measured at single cell resolution [@damondMapHumanType2019].
 
 ## Loading the data
 
-The Damond et al. [@damondMapHumanType2019] dataset is easily loaded via the `r BiocStyle::Biocpkg('imcdatasets')` package. The entire dataset can be loaded by setting `full_dataset = TRUE`. For computational reasons, one can reduce to three patients as well by setting this flag to `FALSE`. We will use the small version to show the functionality of the package even though the statistical power of results is greatly reduced by considering only 100 out of 845 images. For a more interesting use case we encourage readers to load the full dataset for a multi-condition/multi-sample example. The package offers multiple datatypes, we will use the `r BiocStyle::Biocpkg('SpatialExperiment')` (SPE) object.
+The @damondMapHumanType2019 dataset is easily loaded from `ExperimentHub` via a small reader function `.loadExample()`. The entire dataset can be loaded by setting `full = TRUE`. For computational reasons, one can reduce to three patients as well by setting this flag to `FALSE`. We will subset the entire dataset to two samples per condition in order to have a multi-condition/multi-sample setting. The package offers multiple datatypes, we will use the `r BiocStyle::Biocpkg('SpatialExperiment')` (SPE) object.
 
 ```{r loading, warning = FALSE, message = FALSE}
-# load the dataset as SpatialExperiment object
-spe <- imcdatasets::Damond_2019_Pancreas("spe", full_dataset = TRUE)
-# subset the example for computational reasons
+# retrieve example data from Damond et al. (2019)
+spe <- .loadExample(full = TRUE)
+
 spe <- subset(spe, ,patient_id %in% c(6089,6180,6126,6134,6228,6414))
 # set cell types as factors
 colData(spe)$cell_type <- as.factor(colData(spe)$cell_type) 

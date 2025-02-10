@@ -1,4 +1,10 @@
-# spatialFDA 0.99.7
+# spatialFDA 0.99.9
+* remove `imcdatasets` dependency and instead download example data directly
+from `ExperimentHub`
+* added small reader function `.loadExample` to download the data mentioned 
+above
+
+# spatialFDA 0.99.8
 * more packages explicitly named
 * vignette shows use of PCA based random errors and exchanged one sample
 

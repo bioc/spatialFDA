@@ -40,7 +40,8 @@ object as implemented by \code{refund}.
 # load the pancreas dataset
 library("tidyr")
 library("dplyr")
-spe <- imcdatasets::Damond_2019_Pancreas("spe", full_dataset = FALSE)
+# retrieve example data from Damond et al. (2019)
+spe <- .loadExample()
 # calculate the Gcross metric for alpha and beta cells
 metricRes <- calcMetricPerFov(spe, c("alpha", "beta"),
     subsetby = "image_number", fun = "Gcross",

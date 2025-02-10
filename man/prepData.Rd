@@ -22,7 +22,8 @@ response Y and the weights
 Prepare data from calcMetricRes to be in the right format for FDA
 }
 \examples{
-spe <- imcdatasets::Damond_2019_Pancreas("spe", full_dataset = FALSE)
+# retrieve example data from Damond et al. (2019)
+spe <- .loadExample()
 metricRes <- calcMetricPerFov(spe, c("alpha", "beta"),
     subsetby = "image_number", fun = "Gcross", marks = "cell_type",
     rSeq = seq(0, 50, length.out = 50), by = c(

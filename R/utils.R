@@ -1,3 +1,34 @@
+#' load Example dataset from Damond et al. (2019)
+#'
+#' @param full a boolean indicating whether to load the entire
+#' Damond et al. (2019) or only a subset
+#'
+#' @returns A SpatialExperiment object as uploaded to `ExperimentHub()`
+#' @export
+#'
+#' @examples
+#' # retrieve the Damond et al. (2019) dataset
+#' spe <- .loadExample()
+#'
+#' @importFrom ExperimentHub ExperimentHub
+.loadExample <- function(full = FALSE) {
+   # retrieve data from EH directly - code adapted from `imcdatasets`
+   # Damond et.al (2024) licensed under GPLv3
+   eh <- ExperimentHub::ExperimentHub()
+   if(full){
+     title = "Damond_2019_Pancreas - sce - v1 - full"
+   }
+   else{
+     title = "Damond_2019_Pancreas - sce - v1"
+   }
+   object_id <- eh[eh$title == title]$ah_id
+   sce <- eh[[object_id]]
+   spe <- toSpatialExperiment(sce,
+                              sample_id = 'image_name',
+                              spatialCoordsNames = c('cell_x', 'cell_y'))
+   return(spe)
+}
+
 #' Convert SpatialExperiment object to ppp object
 #'
 #' @param df A dataframe with the x and y coordinates from the corresponding
@@ -12,7 +43,8 @@
 #' @export
 #'
 #' @examples
-#' spe <- imcdatasets::Damond_2019_Pancreas("spe", full_dataset = FALSE)
+#' # retrieve example data from Damond et al. (2019)
+#' spe <- .loadExample()
 #' speSub <- subset(spe, , image_number == "138")
 #' dfSub <- .speToDf(speSub)
 #' pp <- .dfToppp(dfSub, marks = "cell_type")
@@ -60,7 +92,8 @@
 #' @export
 #'
 #' @examples
-#' spe <- imcdatasets::Damond_2019_Pancreas("spe", full_dataset = FALSE)
+#' # retrieve example data from Damond et al. (2019)
+#' spe <- .loadExample()
 #' speSub <- subset(spe, , image_number == "138")
 #' dfSub <- .speToDf(speSub)
 #' @importFrom methods is
