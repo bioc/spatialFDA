@@ -38,7 +38,7 @@ knitr::opts_chunk$set(
 
 This vignette demonstrates how to use `r BiocStyle::Biocpkg('spatialFDA')` to perform functional data analysis on spatial statistics metrics. The main aim of this package is to detect differential spatial arrangements within and between celltypes given several samples/conditions. It does so by calculating spatial statistics metrics via the `r BiocStyle::CRANpkg('spatstat')` package and comparing differences using functional additive mixed models as implemented in the `r BiocStyle::CRANpkg('refund')` package [@spatstat2005; @refund2024].
 
-The use case is a dataset from @damondMapHumanType2019 which contains images from 12 human donors. 
+The use case is a dataset from @damondMapHumanType2019 which contains images from 12 human donors. The raw data is published under a `CC-BY-4.0` License on [Mendeley](https://data.mendeley.com/datasets/cydmwsfztj/2). 
 
 This package is similar to other packages in `python` and `R`. The following table shows the main differences in terms of functionality [@ali2024graphcompass; @canete2022spicyr; @wrobel2024mxfda]. 
 
@@ -153,7 +153,7 @@ A well-known metric is Ripley's $K$ function or its variance-stabilised transfor
 - `iso`: an isotropic edge corrected value of the $L$ function
 
 
-```{r Lfunction, warning = FALSE}
+```{r Lfunction, warning = FALSE, message = FALSE}
 metricRes <- calcMetricPerFov(spe = spe, selection = c("alpha", "Tc"),
                               subsetby = "image_number", fun = "Lcross", 
                               marks = "cell_type",
@@ -195,7 +195,7 @@ Another important aspect of spatial analysis is spacing. Here, the shortest dist
 
 For spacing metrics, we get different border corrections but otherwise the output stays the same:
 
-```{r Gfunction, warning = FALSE}
+```{r Gfunction, warning = FALSE, message = FALSE}
 metricRes <- calcMetricPerFov(spe = spe, selection = c("alpha", "Tc"),
                               subsetby = "image_number", fun = "Gcross", 
                               marks = "cell_type",

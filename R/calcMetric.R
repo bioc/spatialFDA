@@ -43,12 +43,13 @@
     ...) {
     # type checking
     stopifnot(is(df, "data.frame"))
-
     pp <- .dfToppp(df, marks = marks, continuous = continuous, window = window)
     if (!continuous) {
-        ppSub <- base::subset(pp, marks %in% selection, drop = TRUE)
+        ppSub <- pp[pp$marks %in% selection, drop = TRUE]
+        spatstat.geom::marks(ppSub) <- factor(spatstat.geom::marks(ppSub),
+                                              levels = unique(selection))
         metaData <- df[, by] %>% base::unique() %>% as.data.frame()
-        colnames(metaData) <- by
+        base::colnames(metaData) <- by
     } else {
         ppSub <- pp
         metaData <- df[, by] %>% base::unique() %>% as.data.frame()
@@ -130,6 +131,13 @@
     centroid <- spatstat.geom::centroid.owin(ppSub$window)
     metricRes$centroidx <- centroid$x
     metricRes$centroidy <- centroid$y
+    metricRes$pplevels <- paste(levels(spatstat.geom::marks(ppSub)),
+                                collapse = " to ")
+    # small assertion that the order of the levels in `ppSub`
+    # correspond to the order indicated in `selection`
+    if(!continuous){
+      stopifnot(levels(spatstat.geom::marks(ppSub)) == selection)
+    }
     rownames(metricRes) <- NULL
     return(metricRes)
 }
@@ -140,7 +148,8 @@
 #' spatial metric as implemented by `spatstat` per field of view.
 #'
 #' @param spe a `SpatialExperiment` object
-#' @param selection the mark(s) you want to compare
+#' @param selection the mark(s) you want to compare. NOTE: This is directional.
+#' c(A,B) is not the same result as c(B,A).
 #' @param subsetby the spe `colData` variable to subset the data by. This
 #' variable has to be provided, even if there is only one sample.
 #' @param fun the `spatstat` function to compute on the point pattern object
@@ -195,6 +204,16 @@ calcMetricPerFov <- function(spe, selection, subsetby, fun, marks = NULL,
       colData(spe) <- colData(spe) %>% cbind(expr)
     }
     df <- .speToDf(spe)
+    if(length(selection)>1){
+      # printing the combination calculated
+      print(paste0("Calculating ", fun, " from ",
+                   selection[1], " to ",
+                   selection[2]))
+    }
+    else{
+      # printing the combination calculated
+      print(paste0("Calculating ", fun, " of ", selection[1]))
+    }
     # we have one case for discrete cell types where we have one column to subset
     if (length(subsetby) == 1) {
         dfLs <- base::split(df, df[[subsetby]])
@@ -287,7 +306,7 @@ calcCrossMetricPerFov <- function(
         return(dplyr::bind_rows(resLs))
     } else {
         # This creates a grid with all possible 2 way combinations
-        ls <- apply(expand.grid(selection, selection), 1, function(x) {
+        ls <- apply(base::expand.grid(selection, selection), 1, function(x) {
             return(c(x[1], x[2]))
         }) %>% t()
 

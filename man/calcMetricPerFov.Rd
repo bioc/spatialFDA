@@ -21,7 +21,8 @@ calcMetricPerFov(
 \arguments{
 \item{spe}{a \code{SpatialExperiment} object}
 
-\item{selection}{the mark(s) you want to compare}
+\item{selection}{the mark(s) you want to compare. NOTE: This is directional.
+c(A,B) is not the same result as c(B,A).}
 
 \item{subsetby}{the spe \code{colData} variable to subset the data by. This
 variable has to be provided, even if there is only one sample.}

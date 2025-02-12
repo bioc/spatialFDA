@@ -1,3 +1,11 @@
+# spatialFDA 0.99.11
+* major changes in fixing the levels of the mark factors in the point pattern.
+Prior to this fix, it could happen that the marks in `selection` do not correspond
+to the marks in the point pattern and therefore give the inverse result.
+
+# spatialFDA 0.99.10
+* minor bug fix 
+
 # spatialFDA 0.99.9
 * remove `imcdatasets` dependency and instead download example data directly
 from `ExperimentHub`
@@ -32,7 +40,7 @@ if `rSeq = NULL`
 * adjusted `...` in `plotMetricPerFov` to be passed only to `geom_line`
 
 # spatialFDA 0.99.3
-* adjust examples to build under 10 min
+* adjust examples to build in under 10 min
 
 # spatialFDA 0.99.2
 * Rewrote vignette with smaller dataset
@@ -46,5 +54,4 @@ if `rSeq = NULL`
 * Added diagnostic plots to vignette
 
 # spatialFDA 0.99.0
-
 * Initial Bioconductor submission.

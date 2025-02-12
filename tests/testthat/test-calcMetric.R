@@ -118,3 +118,58 @@ test_that("Cross function output has correct dimensions for Kdot", {
                 length(rSeq) * (length(unique(spe$image_name)))
                 * (length(selection)) - ((length(rSeq) - 1)*naCols))
 })
+
+test_that("Numeric results are correct for Lcross image 148", {
+  selection <- c("alpha", "Tc")
+  speSub <- subset(spe, , image_number == "148")
+   dfSub <- .speToDf(speSub)
+   metricRes <- .extractMetric(dfSub, selection,
+       fun = "Lcross",
+       marks = "cell_type", rSeq = seq(0, 50, length.out = 50),
+       by = c("patient_stage", "patient_id", "image_number")
+   ) %>% as.data.frame()
+  resObserved <- metricRes %>% dplyr::select(dplyr::all_of(c("r", "theo", "border", "trans", "iso"))) %>%
+    dplyr::slice(1,4,19,38,45,50)
+  resExpected <- read.csv('lcross_single.csv')
+
+  expect_equal(object = resObserved[complete.cases(resObserved), ],
+               expected = resExpected[complete.cases(resExpected), ])
+})
+
+test_that("Numeric results are correct for Lcross", {
+  selection <- c("alpha", "Tc")
+  metricRes <- calcMetricPerFov(spe = spe,
+                                selection = selection,
+                                subsetby = "image_number",
+                                fun = "Lcross",
+                                marks = "cell_type",
+                                rSeq = seq(0, 50, length.out = 50),
+                                by = c("patient_stage", "patient_id",
+                                     "image_number"),
+                                ncores = 1)
+  resObserved <- metricRes %>% dplyr::select(dplyr::all_of(c("r", "theo", "border", "trans", "iso"))) %>%
+    dplyr::slice(5,29,432,1100,3872,4983)
+  resExpected <- read.csv('lcross.csv')
+
+  expect_equal(object = resObserved[complete.cases(resObserved), ],
+               expected = resExpected[complete.cases(resExpected), ])
+})
+
+test_that("Numeric results are correct for Gcross", {
+  selection <- c("alpha", "Tc")
+  metricRes <- calcMetricPerFov(spe = spe,
+                                selection,
+                                subsetby = "image_number",
+                                fun = "Gcross",
+                                marks = "cell_type",
+                                rSeq = seq(0, 50, length.out = 50),
+                                by = c("patient_stage", "patient_id",
+                                       "image_number"),
+                                ncores = 1)
+  resObserved <- metricRes %>% dplyr::select(dplyr::all_of(c("r", "theo", "han", "rs", "km"))) %>%
+    dplyr::slice(5,29,432,1100,3872,4983)
+  resExpected <- read.csv('gcross.csv')
+
+  expect_equal(object = resObserved[complete.cases(resObserved), ],
+               expected = resExpected[complete.cases(resExpected), ])
+})

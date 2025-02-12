@@ -13,7 +13,8 @@
 #' @importFrom ExperimentHub ExperimentHub
 .loadExample <- function(full = FALSE) {
    # retrieve data from EH directly - code adapted from `imcdatasets`
-   # Damond et.al (2024) licensed under GPLv3
+   # Damond et.al (2023) licensed under GPLv3
+   # (https://www.gnu.org/licenses/gpl-3.0.txt)
    eh <- ExperimentHub::ExperimentHub()
    if(full){
      title = "Damond_2019_Pancreas - sce - v1 - full"
@@ -23,9 +24,13 @@
    }
    object_id <- eh[eh$title == title]$ah_id
    sce <- eh[[object_id]]
+   # rename coordinates
+   colData(sce)$x <- colData(sce)$cell_x
+   colData(sce)$y <- colData(sce)$cell_y
+   # create SPE object
    spe <- toSpatialExperiment(sce,
-                              sample_id = 'image_name',
-                              spatialCoordsNames = c('cell_x', 'cell_y'))
+                              sample_id = "image_name",
+                              spatialCoordsNames = c("x", "y"))
    return(spe)
 }
 
@@ -99,9 +104,10 @@
 #' @importFrom methods is
 .speToDf <- function(spe) {
     stopifnot(is(spe, "SpatialExperiment"))
+    stopifnot(spatialCoordsNames(spe) %in% c("x","y"))
     df <- data.frame(
-        x = SpatialExperiment::spatialCoords(spe)[, 1],
-        y = SpatialExperiment::spatialCoords(spe)[, 2]
+        x = SpatialExperiment::spatialCoords(spe)[, "x"],
+        y = SpatialExperiment::spatialCoords(spe)[, "y"]
     )
     df <- cbind(df, colData(spe))
 }
