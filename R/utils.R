@@ -93,7 +93,7 @@
 #' @param spe A SpatialExperiment object subset to a single image
 #'
 #' @return A dataframe with the x and y coordinates from the corresponding
-#' SpatialExperiment and the ColData
+#' SpatialExperiment and the colData
 #' @export
 #'
 #' @examples
@@ -104,10 +104,9 @@
 #' @importFrom methods is
 .speToDf <- function(spe) {
     stopifnot(is(spe, "SpatialExperiment"))
-    stopifnot(spatialCoordsNames(spe) %in% c("x","y"))
     df <- data.frame(
-        x = SpatialExperiment::spatialCoords(spe)[, "x"],
-        y = SpatialExperiment::spatialCoords(spe)[, "y"]
+        x = SpatialExperiment::spatialCoords(spe)[, 1],
+        y = SpatialExperiment::spatialCoords(spe)[, 2]
     )
     df <- cbind(df, colData(spe))
 }

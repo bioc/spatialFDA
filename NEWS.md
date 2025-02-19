@@ -1,3 +1,8 @@
+# spatialFDA 0.99.12
+* Changed indexing of spatial coordinates to positional index. Names can differ
+between objects, e.g. "x" or "coord_x" etc. therefore, positional index 
+generalises better.
+
 # spatialFDA 0.99.11
 * major changes in fixing the levels of the mark factors in the point pattern.
 Prior to this fix, it could happen that the marks in `selection` do not correspond

@@ -11,7 +11,7 @@
 }
 \value{
 A dataframe with the x and y coordinates from the corresponding
-SpatialExperiment and the ColData
+SpatialExperiment and the colData
 }
 \description{
 Transform a SpatialExperiment into a dataframe
